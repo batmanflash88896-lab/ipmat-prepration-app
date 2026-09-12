@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
+}
+
+* { -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  background: #08111F;
+  color: #FFF8EC;
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0E1B2E; }
+::-webkit-scrollbar-thumb { background: #2a3a56; border-radius: 20px; }
+::-webkit-scrollbar-thumb:hover { background: #FF6B35; }
+
+@layer components {
+  .card {
+    @apply rounded-3xl bg-ink2/80 border border-white/5 backdrop-blur-sm;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:border-white/15 hover:shadow-card;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-semibold transition-all active:scale-95 select-none;
+  }
+  .btn-primary {
+    @apply btn bg-orange text-ink shadow-glow hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply btn bg-white/5 text-paper hover:bg-white/10 border border-white/10;
+  }
+  .btn-mint {
+    @apply btn bg-mint text-ink hover:brightness-105;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
+  }
+  .display {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+  }
+  .grid-bg {
+    background-image: linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 34px 34px;
+  }
+  .glass {
+    @apply bg-white/5 border border-white/10 backdrop-blur-md;
+  }
+}
+
+.text-gradient {
+  background: linear-gradient(100deg, #FF6B35 0%, #FFC15E 45%, #78F2C0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.text-gradient-cool {
+  background: linear-gradient(100deg, #7267F0, #4FC3F7 60%, #78F2C0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
