@@ -57,6 +57,30 @@ npm start
 ```
 Progress (XP, streak, attempts, plan) is saved in the browser via localStorage — no backend required for the demo.
 
+## UI skills and registries
+
+Project-scoped agent skills are installed in `.agents/skills/` for:
+
+- Magic UI
+- SmoothUI (including component craft, React performance, and design review guidance)
+- unlumen UI
+- Neobrutalism UI
+
+`components.json` configures all four shadcn-compatible registries. Registry components install into `components/registry/` so they do not conflict with the app's existing `components/ui.tsx` module.
+
+```bash
+# Examples — install only the components a feature needs
+npx shadcn@latest add @magicui/blur-fade
+npx shadcn@latest add @smoothui/smooth-button
+npx shadcn@latest add @unlumen-ui/<public-component-name>
+npx shadcn@latest add @neobrutalism/button
+
+# Inspect installed project skills
+npx skills list
+```
+
+Unlumen Pro components require a separately purchased `UNLUMEN_LICENSE_KEY`; public components do not. Never commit license keys or other credentials.
+
 ## A note on voices & content integrity
 - The app uses **original AI coach voices**, not imitations of public figures. Cloning real people's voices (e.g. celebrities) requires their explicit authorization, so that is intentionally not done here.
 - PYQ mocks mirror the real **paper structure** (section split, count, timing) with fresh, verified questions and retained source metadata (exam, year, pattern).

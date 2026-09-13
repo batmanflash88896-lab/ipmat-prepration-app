@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "magic-ui": {
+      "source": "magicuidesign/magicui",
+      "sourceType": "github",
+      "skillPath": "skills/magic-ui/SKILL.md",
+      "computedHash": "751895d50c76490c6f92a68cdbe61100bd96b4963d1e91e37b5d82c8df0fc2d7"
+    },
+    "smoothui": {
+      "source": "educlopez/smoothui",
+      "sourceType": "github",
+      "skillPath": "apps/docs/registry-assets/SKILL.md",
+      "computedHash": "40aefdedf4820d9444c0604342033054af08fc6a755edc93d874e1c0a68e9403"
+    },
+    "smoothui-component-craft": {
+      "source": "educlopez/smoothui",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/smoothui-component-craft/SKILL.md",
+      "computedHash": "56997d66e3ab1d7ab6882d0af951f82085fb535461ae581c375d90514b39af39"
+    },
+    "vercel-react-best-practices": {
+      "source": "educlopez/smoothui",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/vercel-react-best-practices/SKILL.md",
+      "computedHash": "3f97e5cbe76299f27163a6e09e6f2f1f398b87c3b2c75b1804b7d5fb1572c2f6"
+    },
+    "web-design-guidelines": {
+      "source": "educlopez/smoothui",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/web-design-guidelines/SKILL.md",
+      "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
+    }
+  }
+}
