@@ -30,8 +30,8 @@ export const MOCKS: MockDef[] = [
   {
     slug: "ipmat-indore-elite-1", exam: "IPMAT Indore", title: "Indore Elite Benchmark 01", badge: "IIM Indore pattern", color: "#FF6B35",
     durationMin: 120, difficulty: "Elite", marking: "+4 correct · −1 MCQ · no penalty SA",
-    pattern: "Full 90-question simulation with three locked 40-minute sections: QA-SA, QA-MCQ and VARC.",
-    sourceNote: "Original questions modelled on the reported IPMAT Indore 2025–26 structure and recent difficulty trends.",
+    pattern: "Full 90-question mastery simulation calibrated above the IPMAT Indore 2023 level, with three 40-minute sections: QA-SA, QA-MCQ and VARC.",
+    sourceNote: "Original above-PYQ questions calibrated against the supplied IPMAT Indore 2023 paper; structure follows the reported Indore format.",
     sections: [
       { name: "Quantitative Ability — Short Answer", type: "QA-SA", count: 15, durationMin: 40 },
       { name: "Quantitative Ability — MCQ", type: "QA-MCQ", count: 30, durationMin: 40 },

@@ -8,6 +8,7 @@ import { mockBySlug } from "@/lib/mocks";
 import { buildMixedQA } from "@/lib/qaGen";
 import { buildVARCSet } from "@/lib/varc";
 import { benchmarkQuestions, buildLogicalReasoningSet, enrichQuestion } from "@/lib/advancedQuestions";
+import { buildEliteQuantSet, buildEliteVarcSet } from "@/lib/eliteMock";
 import { hashSeed } from "@/lib/rng";
 import type { Question } from "@/lib/types";
 
@@ -22,7 +23,14 @@ export default function MockTest() {
     mock.sections.forEach((section, sectionIndex) => {
       const seed = hashSeed("mock-v3", slug, sectionIndex);
       const source = mock.benchmark ? `${mock.exam} ${mock.year} pattern benchmark` : mock.sourceNote;
-      const advanced = benchmarkQuestions(section.type, Math.ceil(section.count * .28), seed, source);
+      if (mock.difficulty === "Elite") {
+        const elite = section.type === "VARC" ? buildEliteVarcSet(seed, section.count)
+          : section.type === "LRDI" ? buildLogicalReasoningSet(seed, section.count, source)
+          : buildEliteQuantSet(seed, section.count, section.type);
+        output.push(...elite.map((question) => ({ ...question, source })));
+        return;
+      }
+      const advanced = benchmarkQuestions(section.type, Math.ceil(section.count * .4), seed, source);
       const remaining = section.count - advanced.length;
       const generated = section.type === "VARC" ? buildVARCSet(seed, remaining)
         : section.type === "LRDI" ? buildLogicalReasoningSet(seed, remaining, source)
