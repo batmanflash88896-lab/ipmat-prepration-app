@@ -1,130 +1,119 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+  BarChart3, BookOpen, Bot, BrainCircuit, CalendarDays, ChevronRight,
+  Clock3, Flame, Home, Medal, NotebookPen, PlayCircle, Search, Sparkles, Target,
+} from "lucide-react";
 import { useApp, levelFromXp } from "@/lib/store";
 import { BotFace } from "./AiBot";
-import { useEffect } from "react";
 
-const NAV = [
-  { href: "/", label: "Home", icon: "◆" },
-  { href: "/practice", label: "Practice", icon: "▦" },
-  { href: "/mocks", label: "Mocks", icon: "⏱" },
-  { href: "/varc", label: "VARC", icon: "📖" },
-  { href: "/videos", label: "Videos", icon: "▶" },
-  { href: "/tutor", label: "AI Tutor", icon: "✦" },
-  { href: "/analytics", label: "Analytics", icon: "📈" },
-  { href: "/revision", label: "Mistakes", icon: "↻" },
-  { href: "/planner", label: "Planner", icon: "🗓" },
-  { href: "/leaderboard", label: "Ranks", icon: "🏆" },
+const NAV: { href: string; label: string; icon: LucideIcon; group: string }[] = [
+  { href: "/", label: "Overview", icon: Home, group: "Today" },
+  { href: "/planner", label: "Study plan", icon: CalendarDays, group: "Today" },
+  { href: "/practice", label: "Topic practice", icon: BrainCircuit, group: "Prepare" },
+  { href: "/mocks", label: "Mock lab", icon: Clock3, group: "Prepare" },
+  { href: "/varc", label: "VARC studio", icon: BookOpen, group: "Prepare" },
+  { href: "/videos", label: "Concept lessons", icon: PlayCircle, group: "Learn" },
+  { href: "/tutor", label: "AI doubt room", icon: Bot, group: "Learn" },
+  { href: "/revision", label: "Mistake book", icon: NotebookPen, group: "Improve" },
+  { href: "/analytics", label: "Performance", icon: BarChart3, group: "Improve" },
+  { href: "/leaderboard", label: "Ranks", icon: Medal, group: "Improve" },
 ];
 
 const BOTTOM = [
-  { href: "/", label: "Home", icon: "◆" },
-  { href: "/practice", label: "Practice", icon: "▦" },
-  { href: "/mocks", label: "Mocks", icon: "⏱" },
-  { href: "/tutor", label: "Tutor", icon: "✦" },
-  { href: "/analytics", label: "Stats", icon: "📈" },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/practice", label: "Practice", icon: BrainCircuit },
+  { href: "/mocks", label: "Mocks", icon: Clock3 },
+  { href: "/tutor", label: "Tutor", icon: Bot },
+  { href: "/analytics", label: "Progress", icon: BarChart3 },
 ];
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { profile, xp, streak, ready } = useApp();
+  const { profile, xp, streak, ready, mistakes } = useApp();
   const { level, pct } = levelFromXp(xp);
 
-  // Onboarding gate
   useEffect(() => {
-    if (!ready) return;
-    if (!profile.onboarded && pathname !== "/onboarding") {
-      router.replace("/onboarding");
-    }
+    if (ready && !profile.onboarded && pathname !== "/onboarding") router.replace("/onboarding");
   }, [ready, profile.onboarded, pathname, router]);
 
-  const inTest = pathname?.startsWith("/test") || pathname === "/onboarding";
+  if (pathname?.startsWith("/test") || pathname === "/onboarding") return <div className="min-h-screen grid-bg">{children}</div>;
 
-  if (inTest) {
-    return <div className="min-h-screen grid-bg">{children}</div>;
-  }
+  const activeFor = (href: string) => pathname === href || (href !== "/" && pathname?.startsWith(href));
+  const groups = ["Today", "Prepare", "Learn", "Improve"];
 
   return (
     <div className="min-h-screen grid-bg">
-      {/* ambient glow */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10">
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange/10 blur-[120px]" />
-        <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-violet/10 blur-[120px]" />
-        <div className="absolute bottom-0 left-1/3 w-[400px] h-[400px] rounded-full bg-mint/5 blur-[120px]" />
-      </div>
-
       <div className="flex">
-        {/* Sidebar (desktop) */}
-        <aside className="hidden lg:flex flex-col w-64 shrink-0 h-screen sticky top-0 border-r border-white/5 p-5">
-          <Link href="/" className="flex items-center gap-2 mb-8">
-            <BotFace expression="happy" size={40} />
+        <aside className="sticky top-0 hidden h-screen w-[276px] shrink-0 flex-col border-r border-white/[0.07] bg-[#081322]/85 px-4 py-5 backdrop-blur-xl lg:flex">
+          <Link href="/" className="mb-7 flex items-center gap-3 px-2" aria-label="Aptivo home">
+            <div className="relative grid h-11 w-11 place-items-center rounded-2xl border border-orange/30 bg-orange/10">
+              <Target className="text-orange" size={22} strokeWidth={2.4} />
+              <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-ink bg-mint" />
+            </div>
             <div>
-              <div className="display text-2xl font-bold leading-none text-gradient">Aptivo</div>
-              <div className="text-[10px] tracking-[0.25em] text-paper/40 uppercase">IPMAT Prep</div>
+              <div className="display text-[26px] font-bold leading-none text-gradient">Aptivo</div>
+              <div className="mt-1 text-[9px] font-bold uppercase tracking-[.26em] text-paper/35">IPM command centre</div>
             </div>
           </Link>
 
-          <nav className="flex-1 space-y-1">
-            {NAV.map((n) => {
-              const active = pathname === n.href || (n.href !== "/" && pathname?.startsWith(n.href));
-              return (
-                <Link key={n.href} href={n.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${active ? "bg-orange/15 text-orange border border-orange/20" : "text-paper/60 hover:text-paper hover:bg-white/5"}`}>
-                  <span className="w-5 text-center">{n.icon}</span>{n.label}
-                </Link>
-              );
-            })}
+          <nav className="no-scrollbar flex-1 overflow-y-auto pr-1" aria-label="Primary navigation">
+            {groups.map((group) => (
+              <div key={group} className="mb-4">
+                <div className="mb-1.5 px-3 text-[9px] font-bold uppercase tracking-[.2em] text-paper/25">{group}</div>
+                <div className="space-y-0.5">
+                  {NAV.filter((item) => item.group === group).map((item) => {
+                    const active = activeFor(item.href);
+                    const Icon = item.icon;
+                    return (
+                      <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}
+                        className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition ${active ? "bg-paper text-ink shadow-[3px_3px_0_#ff6b35]" : "text-paper/55 hover:bg-white/[0.05] hover:text-paper"}`}>
+                        <Icon size={17} strokeWidth={active ? 2.5 : 2} />
+                        <span className="flex-1">{item.label}</span>
+                        {item.href === "/revision" && mistakes.filter((m) => !m.reviewed).length > 0 && <span className="rounded-full bg-rose/15 px-1.5 text-[9px] text-rose">{mistakes.filter((m) => !m.reviewed).length}</span>}
+                        {active && <ChevronRight size={14} />}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </nav>
 
-          <div className="card p-4 mt-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-paper/60">Level {level}</span>
-              <span className="text-mint font-bold">{xp} XP</span>
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2"><BotFace expression="happy" size={34} /><div><div className="text-xs font-bold">Level {level}</div><div className="text-[10px] text-paper/40">{xp} total XP</div></div></div>
+              <div className="flex items-center gap-1 text-xs font-bold text-orange"><Flame size={14} />{streak}</div>
             </div>
-            <div className="h-2 rounded-full bg-ink3 mt-2 overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-orange to-mint rounded-full" style={{ width: `${pct}%` }} />
-            </div>
-            <div className="flex items-center gap-1.5 mt-3 text-sm">
-              <span className="text-orange">🔥</span>
-              <span className="font-bold">{streak}</span>
-              <span className="text-paper/50">day streak</span>
-            </div>
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/[0.07]"><div className="h-full rounded-full bg-gradient-to-r from-orange to-gold" style={{ width: `${pct}%` }} /></div>
           </div>
         </aside>
 
-        {/* Main */}
-        <main className="flex-1 min-w-0">
-          {/* Mobile top bar */}
-          <div className="lg:hidden sticky top-0 z-40 glass border-b border-white/5 px-4 py-3 flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <BotFace expression="happy" size={30} />
-              <span className="display text-xl font-bold text-gradient">Aptivo</span>
-            </Link>
-            <div className="flex items-center gap-3 text-sm">
-              <span className="chip bg-mint/15 text-mint">{xp} XP</span>
-              <span className="chip bg-orange/15 text-orange">🔥 {streak}</span>
+        <main className="min-w-0 flex-1">
+          <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#07101d]/80 backdrop-blur-xl">
+            <div className="mx-auto flex h-16 max-w-[1260px] items-center justify-between px-4 md:px-8">
+              <Link href="/" className="flex items-center gap-2 lg:hidden"><Target size={22} className="text-orange" /><span className="display text-xl font-bold">Aptivo</span></Link>
+              <div className="hidden items-center gap-2 text-xs text-paper/40 lg:flex"><Sparkles size={14} className="text-gold" /><span>Train for the decision, not just the question.</span></div>
+              <div className="flex items-center gap-2">
+                <Link href="/practice" className="hidden min-w-[210px] items-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.035] px-3 py-2 text-xs text-paper/35 md:flex"><Search size={14} /> Search topics <span className="ml-auto rounded border border-white/10 px-1.5 py-0.5 text-[9px]">⌘ K</span></Link>
+                <span className="chip bg-orange/10 text-orange"><Flame size={13} />{streak} day streak</span>
+                <div className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-violet/15 text-xs font-bold text-violet">{(profile.name || "A").slice(0, 1).toUpperCase()}</div>
+              </div>
             </div>
-          </div>
+          </header>
 
-          <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10 pb-28 lg:pb-10">
-            {children}
-          </div>
+          <div className="mx-auto max-w-[1260px] px-4 py-6 pb-28 md:px-8 md:py-9 lg:pb-10">{children}</div>
         </main>
       </div>
 
-      {/* Bottom nav (mobile) */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 glass border-t border-white/10 px-2 py-2 flex justify-around">
-        {BOTTOM.map((n) => {
-          const active = pathname === n.href || (n.href !== "/" && pathname?.startsWith(n.href));
-          return (
-            <Link key={n.href} href={n.href}
-              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-[10px] font-semibold transition-all ${active ? "text-orange" : "text-paper/50"}`}>
-              <span className="text-lg">{n.icon}</span>{n.label}
-            </Link>
-          );
-        })}
+      <nav className="glass fixed inset-x-2 bottom-2 z-50 flex justify-around rounded-2xl p-1.5 shadow-2xl lg:hidden" aria-label="Mobile navigation">
+        {BOTTOM.map((item) => { const Icon = item.icon; const active = activeFor(item.href); return (
+          <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined} className={`flex min-w-14 flex-col items-center gap-1 rounded-xl px-2 py-2 text-[9px] font-bold ${active ? "bg-orange text-ink" : "text-paper/45"}`}><Icon size={18} />{item.label}</Link>
+        ); })}
       </nav>
     </div>
   );

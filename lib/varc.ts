@@ -1,6 +1,7 @@
 import type { Question } from "./types";
 import { VOCAB, IDIOMS } from "./vocab";
 import { RNG, hashSeed } from "./rng";
+import { enrichQuestion } from "./advancedQuestions";
 
 export type RCQuestion = {
   q: string;
@@ -277,7 +278,7 @@ export function buildVARCSet(seed: number, count: number): Question[] {
   const builders = [buildVocabQuestion, buildIdiomQuestion, buildSynAntQuestion];
   for (let i = 0; i < count; i++) {
     const rng = new RNG(hashSeed("varc", seed, i));
-    out.push(builders[i % builders.length](rng, `varc-${seed}-${i}`));
+    out.push(enrichQuestion(builders[i % builders.length](rng, `varc-${seed}-${i}`)));
   }
   return out;
 }

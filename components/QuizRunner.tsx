@@ -89,6 +89,14 @@ export default function QuizRunner({ questions, title, kind, totalSec, onFinish,
     if (isSA) setAnswers((a) => ({ ...a, [idx]: saText }));
     const chosen = isSA ? saText : answers[idx];
     if (chosen == null || chosen === "") return;
+
+    // Full simulations must not reveal correctness while the paper is live.
+    if (focusMode) {
+      if (idx < questions.length - 1) setIdx(idx + 1);
+      else doFinish();
+      return;
+    }
+
     const correct = isSA
       ? Math.abs(parseFloat(saText) - (q.answerValue ?? NaN)) < 1e-6
       : chosen === q.answer;
@@ -180,8 +188,12 @@ export default function QuizRunner({ questions, title, kind, totalSec, onFinish,
                   </summary>
                   <div className="mt-3 text-sm space-y-2 text-paper/80">
                     <div>Correct answer: <b className="text-mint">{qq.section === "QA-SA" ? qq.answer : `${qq.answer}) ${qq.choices?.find(c=>c.key===qq.answer)?.text}`}</b></div>
-                    <div className="space-y-1">{qq.solution.map((s, j) => <div key={j} className="flex gap-2"><span className="text-orange">{j + 1}.</span><span>{s}</span></div>)}</div>
-                    {qq.commonMistake && <div className="text-gold text-xs">⚠ Common mistake: {qq.commonMistake}</div>}
+                    <div className="space-y-1">{qq.solution.map((s, j) => <div key={j} className="flex gap-2 leading-5"><span className="text-orange">{j + 1}.</span><span>{s}</span></div>)}</div>
+                    {qq.whyMethod && <div className="text-xs leading-5 text-sky"><b>Why:</b> {qq.whyMethod}</div>}
+                    {qq.concept && <div className="text-xs leading-5 text-paper/55"><b className="text-paper/80">Concept:</b> {qq.concept}</div>}
+                    {qq.alternateMethod && <div className="text-xs leading-5 text-mint"><b>Alternate:</b> {qq.alternateMethod}</div>}
+                    {qq.commonMistake && <div className="text-gold text-xs leading-5">⚠ Common mistake: {qq.commonMistake}</div>}
+                    {qq.takeaway && <div className="text-violet text-xs leading-5"><b>Remember:</b> {qq.takeaway}</div>}
                   </div>
                 </details>
               );
@@ -212,7 +224,8 @@ export default function QuizRunner({ questions, title, kind, totalSec, onFinish,
         </div>
         <div className="flex items-center gap-3">
           {gamified && combo >= 2 && <span className="chip bg-orange/20 text-orange animate-pop">🔥 {combo} combo</span>}
-          <div className={`font-mono text-lg font-bold px-3 py-1 rounded-xl ${totalSec && timeLeft < 60 ? "bg-rose/20 text-rose" : "bg-white/5 text-mint"}`}>
+          {focusMode && <button onClick={doFinish} className="hidden rounded-xl border border-white/10 px-3 py-2 text-xs font-bold text-paper/55 transition hover:border-rose/40 hover:text-rose sm:block">Submit paper</button>}
+          <div className={`rounded-xl px-3 py-2 font-mono text-base font-bold ${totalSec && timeLeft < 60 ? "bg-rose/20 text-rose" : "bg-white/5 text-mint"}`}>
             {totalSec ? fmtTime(timeLeft) : fmtTime(elapsed)}
           </div>
         </div>
@@ -286,13 +299,17 @@ export default function QuizRunner({ questions, title, kind, totalSec, onFinish,
                     <div className={`font-bold mb-1 ${answeredCorrect ? "text-mint" : "text-gold"}`}>
                       {answeredCorrect ? BOT_LINES.correct[idx % BOT_LINES.correct.length] : BOT_LINES.wrong[idx % BOT_LINES.wrong.length]}
                     </div>
-                    <div className="text-sm space-y-1.5 text-paper/85">
-                      <div className="font-semibold text-paper">Step-by-step:</div>
-                      {q.solution.map((s, j) => <div key={j} className="flex gap-2"><span className="text-orange font-bold">{j + 1}.</span><span>{s}</span></div>)}
+                    <div className="mt-3 rounded-xl border border-white/[0.07] bg-black/10 p-4 text-sm text-paper/80">
+                      <div className="mb-3 text-[10px] font-bold uppercase tracking-[.18em] text-orange">Core solution</div>
+                      <div className="space-y-2">{q.solution.map((s, j) => <div key={j} className="flex gap-3 leading-6"><span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-orange/15 text-[10px] font-bold text-orange">{j + 1}</span><span>{s}</span></div>)}</div>
                     </div>
-                    {q.whyMethod && <div className="text-sm mt-2 text-sky/90"><b>Why this method:</b> {q.whyMethod}</div>}
-                    {q.commonMistake && <div className="text-sm mt-1 text-gold/90"><b>⚠ Common mistake:</b> {q.commonMistake}</div>}
-                    {q.faster && <div className="text-sm mt-1 text-mint/90"><b>⚡ Faster way:</b> {q.faster}</div>}
+                    {q.whyMethod && <div className="mt-3 text-sm leading-6 text-sky/90"><b>Why this method:</b> {q.whyMethod}</div>}
+                    <div className="mt-3 grid gap-2">
+                      {q.concept && <details className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3"><summary className="cursor-pointer text-xs font-bold text-paper">Concept foundation</summary><p className="mt-2 text-xs leading-5 text-paper/55">{q.concept}</p></details>}
+                      {q.alternateMethod && <details className="rounded-xl border border-white/[0.07] bg-white/[0.025] p-3"><summary className="cursor-pointer text-xs font-bold text-mint">Alternate / faster route</summary><p className="mt-2 text-xs leading-5 text-paper/55">{q.alternateMethod}</p></details>}
+                      {q.commonMistake && <details className="rounded-xl border border-gold/15 bg-gold/[0.04] p-3"><summary className="cursor-pointer text-xs font-bold text-gold">Exam trap</summary><p className="mt-2 text-xs leading-5 text-paper/55">{q.commonMistake}</p></details>}
+                      {q.takeaway && <details className="rounded-xl border border-violet/15 bg-violet/[0.04] p-3"><summary className="cursor-pointer text-xs font-bold text-violet">Pattern to remember</summary><p className="mt-2 text-xs leading-5 text-paper/55">{q.takeaway}</p></details>}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -300,9 +317,9 @@ export default function QuizRunner({ questions, title, kind, totalSec, onFinish,
           )}
 
           <div className="flex items-center justify-between mt-6">
-            <button onClick={() => idx > 0 && setIdx(idx - 1)} disabled={idx === 0} className="btn-ghost disabled:opacity-30">← Prev</button>
+            <div className="flex gap-2"><button onClick={() => idx > 0 && setIdx(idx - 1)} disabled={idx === 0} className="btn-ghost disabled:opacity-30">← Prev</button>{focusMode && idx < questions.length - 1 && <button onClick={() => setIdx(idx + 1)} className="btn-ghost">Skip</button>}</div>
             {!isRevealed ? (
-              <button onClick={commitAndReveal} disabled={chosen == null || chosen === ""} className="btn-primary disabled:opacity-40">Check answer</button>
+              <button onClick={commitAndReveal} disabled={chosen == null || chosen === ""} className="btn-primary disabled:opacity-40">{focusMode ? (idx < questions.length - 1 ? "Save & next →" : "Save & submit") : "Check answer"}</button>
             ) : (
               <button onClick={next} className="btn-mint">{idx < questions.length - 1 ? "Next →" : "Finish test 🏁"}</button>
             )}

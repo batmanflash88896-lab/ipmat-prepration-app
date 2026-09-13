@@ -1,3 +1,10 @@
+export type MockSection = {
+  name: string;
+  type: "QA-MCQ" | "QA-SA" | "VARC" | "LRDI";
+  count: number;
+  durationMin?: number;
+};
+
 export type MockDef = {
   slug: string;
   exam: string;
@@ -5,112 +12,90 @@ export type MockDef = {
   badge: string;
   color: string;
   durationMin: number;
-  sections: { name: string; type: "QA-MCQ" | "QA-SA" | "VARC"; count: number }[];
+  sections: MockSection[];
   pattern: string;
-  pyq?: boolean;
+  benchmark?: boolean;
   year?: number;
+  difficulty: "Moderate" | "Hard" | "Elite";
+  marking: string;
+  sourceNote: string;
 };
 
-// Patterns modelled on the actual IPMAT / JIPMAT structures
+/**
+ * Full-length structures follow the widely reported 2025–26 formats. Question
+ * content is original: benchmark sets reproduce topic mix and reasoning depth,
+ * never a copied or falsely labelled official paper.
+ */
 export const MOCKS: MockDef[] = [
   {
-    slug: "ipmat-indore-1",
-    exam: "IPMAT Indore",
-    title: "IPMAT Indore — Full Mock 1",
-    badge: "IIM Indore",
-    color: "#FF6B35",
-    durationMin: 120,
-    pattern: "3 sections: QA (MCQ), QA (Short Answer), VARC (MCQ). No section switching in the real exam.",
+    slug: "ipmat-indore-elite-1", exam: "IPMAT Indore", title: "Indore Elite Benchmark 01", badge: "IIM Indore pattern", color: "#FF6B35",
+    durationMin: 120, difficulty: "Elite", marking: "+4 correct · −1 MCQ · no penalty SA",
+    pattern: "Full 90-question simulation with three locked 40-minute sections: QA-SA, QA-MCQ and VARC.",
+    sourceNote: "Original questions modelled on the reported IPMAT Indore 2025–26 structure and recent difficulty trends.",
     sections: [
-      { name: "Quantitative Ability (MCQ)", type: "QA-MCQ", count: 20 },
-      { name: "Quantitative Ability (Short Answer)", type: "QA-SA", count: 10 },
-      { name: "Verbal Ability (MCQ)", type: "VARC", count: 20 },
+      { name: "Quantitative Ability — Short Answer", type: "QA-SA", count: 15, durationMin: 40 },
+      { name: "Quantitative Ability — MCQ", type: "QA-MCQ", count: 30, durationMin: 40 },
+      { name: "Verbal Ability & RC", type: "VARC", count: 45, durationMin: 40 },
     ],
   },
   {
-    slug: "ipmat-indore-2",
-    exam: "IPMAT Indore",
-    title: "IPMAT Indore — Full Mock 2",
-    badge: "IIM Indore",
-    color: "#FF6B35",
-    durationMin: 120,
-    pattern: "Balanced difficulty with a heavier short-answer QA block.",
+    slug: "ipmat-indore-2024-benchmark", exam: "IPMAT Indore", title: "Indore 2024 Pattern Benchmark", badge: "2024 pattern", color: "#F7B955",
+    durationMin: 120, difficulty: "Hard", benchmark: true, year: 2024, marking: "+4 correct · −1 MCQ · no penalty SA",
+    pattern: "A fresh, original 90-question paper calibrated to the 2024-style section split—not a reproduction of the paper.",
+    sourceNote: "Original benchmark based on publicly reported 2024 exam structure. No recalled question is presented as official.",
     sections: [
-      { name: "Quantitative Ability (MCQ)", type: "QA-MCQ", count: 20 },
-      { name: "Quantitative Ability (Short Answer)", type: "QA-SA", count: 10 },
-      { name: "Verbal Ability (MCQ)", type: "VARC", count: 20 },
+      { name: "Quantitative Ability — Short Answer", type: "QA-SA", count: 15, durationMin: 40 },
+      { name: "Quantitative Ability — MCQ", type: "QA-MCQ", count: 30, durationMin: 40 },
+      { name: "Verbal Ability", type: "VARC", count: 45, durationMin: 40 },
     ],
   },
   {
-    slug: "ipmat-rohtak-1",
-    exam: "IPMAT Rohtak",
-    title: "IPMAT Rohtak — Full Mock 1",
-    badge: "IIM Rohtak",
-    color: "#7267F0",
-    durationMin: 120,
-    pattern: "3 sections all MCQ: Quantitative Ability, Logical Reasoning (modelled via QA), Verbal Ability.",
+    slug: "ipmat-indore-2025-benchmark", exam: "IPMAT Indore", title: "Indore 2025 Pattern Benchmark", badge: "2025 pattern", color: "#E97451",
+    durationMin: 120, difficulty: "Elite", benchmark: true, year: 2025, marking: "+4 correct · −1 MCQ · no penalty SA",
+    pattern: "A high-difficulty original benchmark reflecting the algebra, number-system and inference pressure associated with recent papers.",
+    sourceNote: "Pattern-informed original content. It is not an IIM-issued or verbatim previous-year paper.",
     sections: [
-      { name: "Quantitative Ability", type: "QA-MCQ", count: 20 },
-      { name: "Logical Reasoning", type: "QA-MCQ", count: 15 },
-      { name: "Verbal Ability", type: "VARC", count: 20 },
+      { name: "Quantitative Ability — Short Answer", type: "QA-SA", count: 15, durationMin: 40 },
+      { name: "Quantitative Ability — MCQ", type: "QA-MCQ", count: 30, durationMin: 40 },
+      { name: "Verbal Ability", type: "VARC", count: 45, durationMin: 40 },
     ],
   },
   {
-    slug: "jipmat-1",
-    exam: "JIPMAT",
-    title: "JIPMAT — Full Mock 1",
-    badge: "IIM Jammu / Bodh Gaya",
-    color: "#4FC3F7",
-    durationMin: 150,
-    pattern: "3 sections all MCQ: Quantitative Aptitude, Data Interpretation & Logical Reasoning, Verbal Ability & Reading Comprehension.",
+    slug: "ipmat-rohtak-elite-1", exam: "IPMAT Rohtak", title: "Rohtak Full Simulation 01", badge: "IIM Rohtak pattern", color: "#8B7CF6",
+    durationMin: 120, difficulty: "Hard", marking: "+4 correct · −1 incorrect",
+    pattern: "Full 120-question simulation: 40 QA, 40 Logical Reasoning and 40 Verbal questions with a flexible overall timer.",
+    sourceNote: "Original questions following the publicly reported IPMAT Rohtak 2025–26 format.",
     sections: [
-      { name: "Quantitative Aptitude", type: "QA-MCQ", count: 20 },
-      { name: "DI & Logical Reasoning", type: "QA-MCQ", count: 15 },
-      { name: "Verbal Ability & RC", type: "VARC", count: 20 },
+      { name: "Quantitative Ability", type: "QA-MCQ", count: 40 },
+      { name: "Logical Reasoning", type: "LRDI", count: 40 },
+      { name: "Verbal Ability", type: "VARC", count: 40 },
     ],
   },
   {
-    slug: "ipmat-indore-pyq-2023",
-    exam: "IPMAT Indore",
-    title: "IPMAT Indore — PYQ Pattern 2023",
-    badge: "PYQ 2023",
-    color: "#FFC15E",
-    durationMin: 120,
-    pyq: true,
-    year: 2023,
-    pattern: "Previous-year pattern practice modelled on the 2023 paper structure with source metadata retained.",
+    slug: "jipmat-elite-1", exam: "JIPMAT", title: "JIPMAT Full Simulation 01", badge: "NTA JIPMAT pattern", color: "#45C4A0",
+    durationMin: 150, difficulty: "Hard", marking: "+4 correct · −1 incorrect",
+    pattern: "Full 100-question simulation: 33 QA, 33 DI-LR and 34 VARC questions in 150 minutes.",
+    sourceNote: "Original questions aligned to the publicly reported NTA JIPMAT 2025–26 structure.",
     sections: [
-      { name: "Quantitative Ability (MCQ)", type: "QA-MCQ", count: 20 },
-      { name: "Quantitative Ability (Short Answer)", type: "QA-SA", count: 10 },
-      { name: "Verbal Ability (MCQ)", type: "VARC", count: 20 },
+      { name: "Quantitative Aptitude", type: "QA-MCQ", count: 33 },
+      { name: "Data Interpretation & Logical Reasoning", type: "LRDI", count: 33 },
+      { name: "Verbal Ability & Reading Comprehension", type: "VARC", count: 34 },
     ],
   },
   {
-    slug: "sectional-qa-1",
-    exam: "Sectional",
-    title: "QA Sectional — Speed Builder",
-    badge: "Sectional",
-    color: "#78F2C0",
-    durationMin: 40,
-    pattern: "Focused quantitative sectional to build speed and accuracy under time pressure.",
-    sections: [
-      { name: "Quantitative Ability", type: "QA-MCQ", count: 25 },
-    ],
+    slug: "sectional-qa-elite", exam: "Sectional", title: "QA Elite Sectional", badge: "40-minute sectional", color: "#FF6B35",
+    durationMin: 40, difficulty: "Elite", marking: "+4 correct · −1 incorrect",
+    pattern: "Thirty difficult mixed QA questions for algebra, modern maths, number systems and geometry.",
+    sourceNote: "Original Aptivo sectional.", sections: [{ name: "Quantitative Ability", type: "QA-MCQ", count: 30 }],
   },
   {
-    slug: "sectional-varc-1",
-    exam: "Sectional",
-    title: "VARC Sectional — Verbal Sprint",
-    badge: "Sectional",
-    color: "#FF5D8F",
-    durationMin: 30,
-    pattern: "Verbal ability sectional covering vocabulary, idioms and usage.",
-    sections: [
-      { name: "Verbal Ability", type: "VARC", count: 25 },
-    ],
+    slug: "sectional-lrdi-elite", exam: "Sectional", title: "LRDI Decision Sprint", badge: "40-minute sectional", color: "#45C4A0",
+    durationMin: 40, difficulty: "Hard", marking: "+4 correct · −1 incorrect",
+    pattern: "Forty reasoning questions focused on set construction, constraints, deductions and weighted data.",
+    sourceNote: "Original Aptivo sectional.", sections: [{ name: "Logical Reasoning & DI", type: "LRDI", count: 40 }],
   },
 ];
 
 export function mockBySlug(slug: string) {
-  return MOCKS.find((m) => m.slug === slug);
+  return MOCKS.find((mock) => mock.slug === slug);
 }

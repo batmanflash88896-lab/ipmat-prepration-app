@@ -4,7 +4,7 @@ export type Question = {
   id: string;
   topic: string;
   subtopic: string;
-  section: "QA-MCQ" | "QA-SA" | "VARC";
+  section: "QA-MCQ" | "QA-SA" | "VARC" | "LRDI";
   difficulty: "Easy" | "Medium" | "Hard";
   stem: string;
   choices?: Choice[]; // absent for short-answer
@@ -14,7 +14,10 @@ export type Question = {
   whyMethod?: string;
   commonMistake?: string;
   faster?: string;
-  source?: string; // e.g. "IPMAT Indore 2023 (PYQ)"
+  concept?: string; // expandable conceptual foundation
+  alternateMethod?: string;
+  takeaway?: string;
+  source?: string; // provenance or original benchmark pattern label
 };
 
 export type TopicMeta = {

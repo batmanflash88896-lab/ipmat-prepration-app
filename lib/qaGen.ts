@@ -1,5 +1,6 @@
 import { RNG, hashSeed } from "./rng";
 import type { Question, Choice } from "./types";
+import { enrichQuestion } from "./advancedQuestions";
 
 const DIFF = ["Easy", "Medium", "Hard"] as const;
 
@@ -442,7 +443,7 @@ export function buildQATest(topicSlug: string, seed: number, count = 30): Questi
   for (let i = 0; i < count; i++) {
     const rng = new RNG(hashSeed(topicSlug, seed, i, "q"));
     const difficulty = DIFF[Math.min(2, Math.floor(i / Math.ceil(count / 3)))];
-    out.push(gen(rng, `${topicSlug}-${seed}-${i}`, difficulty));
+    out.push(enrichQuestion(gen(rng, `${topicSlug}-${seed}-${i}`, difficulty)));
   }
   return out;
 }
@@ -457,7 +458,7 @@ export function buildMixedQA(seed: number, count: number, section: "QA-MCQ" | "Q
     const rng = new RNG(hashSeed("mix", seed, i, section));
     const slug = pool[i % pool.length];
     const difficulty = DIFF[rng.int(0, 2)];
-    out.push(QA_GENERATORS[slug](rng, `mix-${seed}-${i}`, difficulty));
+    out.push(enrichQuestion(QA_GENERATORS[slug](rng, `mix-${seed}-${i}`, difficulty)));
   }
   return out;
 }
