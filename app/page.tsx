@@ -2,13 +2,15 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  ArrowRight, BookOpenCheck, BrainCircuit, CalendarClock, Check, ChevronRight,
-  CircleGauge, Clock3, Flame, Play, Sparkles, Target, Trophy,
+  ArrowRight, BookOpenCheck, BrainCircuit, Check, ChevronRight,
+  CircleGauge, Clock3, Play, Sparkles, Target, Trophy,
 } from "lucide-react";
 import { useApp, levelFromXp, isDailyDone } from "@/lib/store";
 import { Ring, AnimatedNumber } from "@/components/ui";
 import { VOCAB } from "@/lib/vocab";
 import { QA_TOPICS } from "@/lib/content";
+import StudyOrbit from "@/components/StudyOrbit";
+import { BlurFade } from "@/components/registry/blur-fade";
 
 function daysTo(dateStr: string) {
   return Math.max(0, Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86400000));
@@ -37,36 +39,25 @@ export default function Home() {
 
   return (
     <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[32px] border border-white/[0.08] bg-[#101e31] p-6 md:p-9">
-        <div className="absolute right-0 top-0 h-full w-2/5 opacity-20 [background:radial-gradient(circle_at_center,#ff6b35,transparent_64%)]" />
-        <div className="absolute -right-10 -top-10 hidden h-72 w-72 rounded-full border border-orange/15 md:block" />
-        <div className="absolute right-9 top-9 hidden h-52 w-52 rounded-full border border-orange/10 md:block" />
-        <div className="relative grid gap-8 lg:grid-cols-[1fr_340px] lg:items-end">
-          <div>
-            <div className="mb-5 flex flex-wrap items-center gap-2">
-              <span className="eyebrow">Your command centre</span>
-              <span className="h-1 w-1 rounded-full bg-paper/30" />
-              <span className="text-[10px] font-bold uppercase tracking-[.18em] text-mint">Plan active</span>
+      <section className="relative overflow-hidden rounded-[36px] border border-white/[0.1] bg-[linear-gradient(135deg,#111f35_0%,#0a1425_52%,#171126_100%)] px-6 py-8 shadow-[0_45px_100px_-50px_rgba(0,0,0,1)] md:px-10 md:py-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_20%,rgba(255,107,53,.17),transparent_30%),radial-gradient(circle_at_92%_75%,rgba(114,103,240,.2),transparent_32%)]" />
+        <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_500px]">
+          <BlurFade>
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-orange/25 bg-orange/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.2em] text-orange">AI-powered mastery system</span>
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] font-bold text-paper/50">{days} days to {profile.targetExam}</span>
             </div>
-            <h1 className="display max-w-3xl text-4xl font-semibold leading-[1.05] md:text-6xl">
-              Good to see you, <span className="text-orange">{profile.name || "Aspirant"}.</span><br />Today builds the percentile.
+            <h1 className="display max-w-3xl text-5xl font-semibold leading-[.98] md:text-7xl">
+              Turn effort into an <span className="text-gradient">IIM result.</span>
             </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-6 text-paper/55 md:text-base">Targeting <b className="text-paper">{profile.targetExam}</b>. Your next best move is a short, difficult set—then a deliberate review of every miss.</p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <Link href={nextTask.href} className="btn-primary"><Play size={16} fill="currentColor" /> Start next drill <ArrowRight size={16} /></Link>
-              <Link href="/mocks" className="btn-ghost"><Clock3 size={16} /> Enter mock lab</Link>
+            <p className="mt-6 max-w-xl text-sm leading-7 text-paper/55 md:text-base">A focused preparation cockpit that finds your weak patterns, pushes you above exam level, and turns every mistake into the next advantage.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href={nextTask.href} className="btn-primary"><Play size={16} fill="currentColor" /> Continue today’s plan <ArrowRight size={16} /></Link>
+              <Link href="/mocks" className="btn-ghost"><Clock3 size={16} /> Take elite mock</Link>
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-white/[0.08] bg-black/15 p-4">
-              <div className="mb-6 flex items-center justify-between text-paper/40"><CalendarClock size={17} /><span className="text-[10px] uppercase tracking-wider">Exam clock</span></div>
-              <div className="display text-4xl font-bold text-paper">{days}</div><div className="text-xs text-paper/40">days remaining</div>
-            </div>
-            <div className="rounded-2xl border border-orange/20 bg-orange/10 p-4">
-              <div className="mb-6 flex items-center justify-between text-orange"><Flame size={17} /><span className="text-[10px] uppercase tracking-wider">Momentum</span></div>
-              <div className="display text-4xl font-bold text-orange">{streak}</div><div className="text-xs text-paper/45">day study streak</div>
-            </div>
-          </div>
+            <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-[11px] font-semibold text-paper/35"><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-mint" /> Adaptive explanations</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-orange" /> Above-PYQ mocks</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-violet" /> Precision analytics</span></div>
+          </BlurFade>
+          <BlurFade delay={0.12} className="hidden lg:block"><StudyOrbit /></BlurFade>
         </div>
       </section>
 
