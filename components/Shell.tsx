@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { LucideIcon } from "lucide-react";
@@ -8,7 +9,8 @@ import {
   Clock3, Flame, Home, Medal, NotebookPen, PlayCircle, Search, Sparkles, Target,
 } from "lucide-react";
 import { useApp, levelFromXp } from "@/lib/store";
-import { BotFace } from "./AiBot";
+
+const SpatialEnvironment = dynamic(() => import("./SpatialEnvironment"), { ssr: false });
 
 const NAV: { href: string; label: string; icon: LucideIcon; group: string }[] = [
   { href: "/", label: "Overview", icon: Home, group: "Today" },
@@ -47,9 +49,10 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const groups = ["Today", "Prepare", "Learn", "Improve"];
 
   return (
-    <div className="min-h-screen grid-bg">
-      <div className="flex">
-        <aside className="sticky top-0 hidden h-screen w-[276px] shrink-0 flex-col border-r border-white/[0.07] bg-[#081322]/85 px-4 py-5 backdrop-blur-xl lg:flex">
+    <div className="spatial-shell min-h-screen grid-bg">
+      <SpatialEnvironment />
+      <div className="spatial-layout flex">
+        <aside className="spatial-sidebar sticky top-0 hidden h-screen w-[276px] shrink-0 flex-col border-r border-white/[0.07] bg-[#081322]/85 px-4 py-5 backdrop-blur-xl lg:flex">
           <Link href="/" className="mb-7 flex items-center gap-3 px-2" aria-label="Aptivo home">
             <div className="relative grid h-11 w-11 place-items-center rounded-2xl border border-orange/30 bg-orange/10">
               <Target className="text-orange" size={22} strokeWidth={2.4} />
@@ -86,15 +89,15 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
           <div className="rounded-2xl border border-white/[0.08] bg-white/[0.035] p-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><BotFace expression="happy" size={34} /><div><div className="text-xs font-bold">Level {level}</div><div className="text-[10px] text-paper/40">{xp} total XP</div></div></div>
+              <div className="flex items-center gap-2"><div className="spatial-core-icon grid h-[34px] w-[34px] place-items-center rounded-xl border border-orange/25 bg-orange/10"><BrainCircuit size={17} className="text-orange" /></div><div><div className="text-xs font-bold">Level {level}</div><div className="text-[10px] text-paper/40">{xp} total XP</div></div></div>
               <div className="flex items-center gap-1 text-xs font-bold text-orange"><Flame size={14} />{streak}</div>
             </div>
             <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/[0.07]"><div className="h-full rounded-full bg-gradient-to-r from-orange to-gold" style={{ width: `${pct}%` }} /></div>
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1">
-          <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#07101d]/80 backdrop-blur-xl">
+        <main className="spatial-main min-w-0 flex-1">
+          <header className="spatial-header sticky top-0 z-40 border-b border-white/[0.06] bg-[#07101d]/80 backdrop-blur-xl">
             <div className="mx-auto flex h-16 max-w-[1260px] items-center justify-between px-4 md:px-8">
               <Link href="/" className="flex items-center gap-2 lg:hidden"><Target size={22} className="text-orange" /><span className="display text-xl font-bold">Aptivo</span></Link>
               <div className="hidden items-center gap-2 text-xs text-paper/40 lg:flex"><Sparkles size={14} className="text-gold" /><span>Train for the decision, not just the question.</span></div>
@@ -106,7 +109,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             </div>
           </header>
 
-          <div className="mx-auto max-w-[1260px] px-4 py-6 pb-28 md:px-8 md:py-9 lg:pb-10">{children}</div>
+          <div className="spatial-content mx-auto max-w-[1260px] px-4 py-6 pb-28 md:px-8 md:py-9 lg:pb-10">{children}</div>
         </main>
       </div>
 
