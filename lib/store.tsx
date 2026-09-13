@@ -22,6 +22,24 @@ export type StudyTask = {
   day: number; // day index in plan
 };
 
+export type MistakeItem = {
+  id: string;
+  questionId: string;
+  stem: string;
+  topic: string;
+  subtopic: string;
+  section: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  chosenAnswer: string;
+  correctAnswer: string;
+  solution: string[];
+  commonMistake?: string;
+  source?: string;
+  date: string;
+  reviewed: boolean;
+  reviewCount: number;
+};
+
 export type Profile = {
   name: string;
   targetExam: string;
@@ -38,6 +56,7 @@ type State = {
   streak: number;
   lastActive: string; // ISO date (yyyy-mm-dd)
   attempts: AttemptLog[];
+  mistakes: MistakeItem[];
   vocabLearned: string[];
   plan: StudyTask[];
   dailyDone: Record<string, string>; // e.g. {"daily-qa": "2026-09-12"}
@@ -59,6 +78,7 @@ const DEFAULT_STATE: State = {
   streak: 0,
   lastActive: "",
   attempts: [],
+  mistakes: [],
   vocabLearned: [],
   plan: [],
   dailyDone: {},
@@ -68,6 +88,9 @@ type Ctx = State & {
   ready: boolean;
   setProfile: (p: Partial<Profile>) => void;
   addAttempt: (a: Omit<AttemptLog, "id" | "date">) => void;
+  recordMistakes: (items: Omit<MistakeItem, "id" | "date" | "reviewed" | "reviewCount">[]) => void;
+  toggleMistakeReviewed: (id: string) => void;
+  clearReviewedMistakes: () => void;
   addXp: (n: number) => void;
   touchStreak: () => void;
   learnVocab: (word: string) => void;
@@ -132,6 +155,38 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const recordMistakes = useCallback((items: Omit<MistakeItem, "id" | "date" | "reviewed" | "reviewCount">[]) => {
+    if (!items.length) return;
+    setState((s) => {
+      const now = new Date().toISOString();
+      const incoming = items.map((item) => {
+        const previous = s.mistakes.find((m) => m.questionId === item.questionId);
+        return {
+          ...item,
+          id: previous?.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          date: now,
+          reviewed: false,
+          reviewCount: previous?.reviewCount ?? 0,
+        };
+      });
+      const incomingIds = new Set(incoming.map((m) => m.questionId));
+      return { ...s, mistakes: [...incoming, ...s.mistakes.filter((m) => !incomingIds.has(m.questionId))].slice(0, 300) };
+    });
+  }, []);
+
+  const toggleMistakeReviewed = useCallback((id: string) => {
+    setState((s) => ({
+      ...s,
+      mistakes: s.mistakes.map((m) => m.id === id
+        ? { ...m, reviewed: !m.reviewed, reviewCount: !m.reviewed ? m.reviewCount + 1 : m.reviewCount }
+        : m),
+    }));
+  }, []);
+
+  const clearReviewedMistakes = useCallback(() => {
+    setState((s) => ({ ...s, mistakes: s.mistakes.filter((m) => !m.reviewed) }));
+  }, []);
+
   const learnVocab = useCallback((word: string) => {
     setState((s) => (s.vocabLearned.includes(word) ? s : { ...s, vocabLearned: [...s.vocabLearned, word] }));
   }, []);
@@ -149,7 +204,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AppCtx.Provider
-      value={{ ...state, ready, setProfile, addAttempt, addXp, touchStreak, learnVocab, markDaily, setPlan, toggleTask, reset }}
+      value={{ ...state, ready, setProfile, addAttempt, recordMistakes, toggleMistakeReviewed, clearReviewedMistakes, addXp, touchStreak, learnVocab, markDaily, setPlan, toggleTask, reset }}
     >
       {children}
     </AppCtx.Provider>

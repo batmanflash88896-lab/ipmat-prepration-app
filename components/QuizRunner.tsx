@@ -35,7 +35,7 @@ const BOT_LINES: { exp: Expression; correct: string[]; wrong: string[] } = {
 };
 
 export default function QuizRunner({ questions, title, kind, totalSec, onFinish, focusMode, gamified = true }: Props) {
-  const { addAttempt } = useApp();
+  const { addAttempt, recordMistakes } = useApp();
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [saText, setSaText] = useState("");
@@ -119,6 +119,29 @@ export default function QuizRunner({ questions, title, kind, totalSec, onFinish,
       else if (a === qq.answer) c++;
     });
     const xp = c * 10 + Math.round((c / questions.length) * 30);
+    const missed = questions.flatMap((qq, i) => {
+      const chosen = i === idx && qq.section === "QA-SA" ? saText : answers[i];
+      const correct = qq.section === "QA-SA"
+        ? Math.abs(parseFloat(chosen ?? "") - (qq.answerValue ?? NaN)) < 1e-6
+        : chosen === qq.answer;
+      if (correct) return [];
+      const choiceText = qq.choices?.find((choice) => choice.key === chosen)?.text;
+      const answerText = qq.choices?.find((choice) => choice.key === qq.answer)?.text;
+      return [{
+        questionId: qq.id,
+        stem: qq.stem,
+        topic: qq.topic,
+        subtopic: qq.subtopic,
+        section: qq.section,
+        difficulty: qq.difficulty,
+        chosenAnswer: chosen ? (choiceText ? `${chosen}) ${choiceText}` : chosen) : "Skipped",
+        correctAnswer: answerText ? `${qq.answer}) ${answerText}` : qq.answer,
+        solution: qq.solution,
+        commonMistake: qq.commonMistake,
+        source: qq.source,
+      }];
+    });
+    recordMistakes(missed);
     addAttempt({ kind, label: title, topic: q.topic, section: q.section, correct: c, total: questions.length, timeSec, xp });
     setFinished(true);
     if (c / questions.length >= 0.6) { setConfetti(true); setTimeout(() => setConfetti(false), 2500); }

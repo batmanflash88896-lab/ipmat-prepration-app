@@ -118,7 +118,7 @@ export default function Home() {
             { href: "/videos", label: "Video Lessons", desc: "AI-narrated topic teaching", icon: "▶", color: "#FF5D8F" },
             { href: "/tutor", label: "AI Doubt Solver", desc: "Step-by-step, verified", icon: "✦", color: "#78F2C0" },
             { href: "/planner", label: "Study Planner", desc: "Adaptive daily plan", icon: "🗓", color: "#4FC3F7" },
-            { href: "/leaderboard", label: "Leaderboard", desc: "Compete & climb", icon: "🏆", color: "#FFC15E" },
+            { href: "/revision", label: "Mistake Notebook", desc: `${app.mistakes.filter((m) => !m.reviewed).length} questions to review`, icon: "↻", color: "#FFC15E" },
           ].map((m) => (
             <Link key={m.href} href={m.href} className="card card-hover p-5 group">
               <div className="w-11 h-11 rounded-2xl grid place-items-center text-xl mb-3" style={{ background: `${m.color}22`, color: m.color }}>{m.icon}</div>

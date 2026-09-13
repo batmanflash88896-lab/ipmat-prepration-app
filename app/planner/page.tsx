@@ -42,7 +42,7 @@ export default function Planner() {
   const doneCount = plan.filter((t) => t.done).length;
   const typeColor: Record<string, string> = { QA: "#FF6B35", VARC: "#7267F0", Mock: "#FF5D8F", Revision: "#FFC15E" };
 
-  const links: Record<string, string> = { QA: "/practice", VARC: "/varc", Mock: "/mocks", Revision: "/analytics" };
+  const links: Record<string, string> = { QA: "/practice", VARC: "/varc", Mock: "/mocks", Revision: "/revision" };
 
   return (
     <div className="space-y-6">
