@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight, BookOpenCheck, BrainCircuit, Check, ChevronRight,
@@ -9,8 +10,10 @@ import { useApp, levelFromXp, isDailyDone } from "@/lib/store";
 import { Ring, AnimatedNumber } from "@/components/ui";
 import { VOCAB } from "@/lib/vocab";
 import { QA_TOPICS } from "@/lib/content";
-import StudyOrbit from "@/components/StudyOrbit";
 import { BlurFade } from "@/components/registry/blur-fade";
+import { Tilt } from "@/components/registry/tilt";
+
+const Apti3D = dynamic(() => import("@/components/Apti3D"), { ssr: false, loading: () => <div className="h-[430px] animate-pulse-soft rounded-full bg-orange/5" /> });
 
 function daysTo(dateStr: string) {
   return Math.max(0, Math.ceil((new Date(dateStr).getTime() - Date.now()) / 86400000));
@@ -57,7 +60,11 @@ export default function Home() {
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-[11px] font-semibold text-paper/35"><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-mint" /> Adaptive explanations</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-orange" /> Above-PYQ mocks</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-violet" /> Precision analytics</span></div>
           </BlurFade>
-          <BlurFade delay={0.12} className="hidden lg:block"><StudyOrbit /></BlurFade>
+          <BlurFade delay={0.12} className="relative hidden lg:block">
+            <Apti3D />
+            <div className="absolute bottom-9 left-2 rounded-2xl border border-mint/20 bg-[#102739]/90 p-3 shadow-2xl backdrop-blur-xl"><div className="text-[9px] font-bold uppercase tracking-wider text-mint">Readiness</div><div className="mt-1 text-xl font-bold">78%</div></div>
+            <div className="absolute right-0 top-12 rounded-2xl border border-violet/20 bg-[#1a1734]/90 p-3 shadow-2xl backdrop-blur-xl"><div className="text-[9px] font-bold uppercase tracking-wider text-violet">This week</div><div className="mt-1 text-sm font-bold">+12% accuracy</div></div>
+          </BlurFade>
         </div>
       </section>
 
@@ -68,11 +75,13 @@ export default function Home() {
           { label: "Experience", value: xp, suffix: " XP", note: `${toNext} to level ${level + 1}`, icon: Trophy, color: "text-gold" },
           { label: "Mistakes due", value: app.mistakes.filter((m) => !m.reviewed).length, suffix: "", note: "Review within 24 hours", icon: Sparkles, color: "text-violet" },
         ].map((metric) => { const Icon = metric.icon; return (
-          <div key={metric.label} className="metric group">
-            <div className="mb-5 flex items-center justify-between"><span className="text-xs font-semibold text-paper/45">{metric.label}</span><Icon size={17} className={metric.color} /></div>
-            <div className="text-2xl font-bold"><AnimatedNumber value={metric.value} suffix={metric.suffix} /></div>
-            <div className="mt-1 text-[11px] text-paper/35">{metric.note}</div>
-          </div>
+          <Tilt key={metric.label} className="h-full">
+            <div className="metric group h-full shadow-[0_20px_45px_-30px_rgba(0,0,0,.9)] [transform:translateZ(18px)]">
+              <div className="mb-5 flex items-center justify-between"><span className="text-xs font-semibold text-paper/45">{metric.label}</span><Icon size={17} className={metric.color} /></div>
+              <div className="text-2xl font-bold"><AnimatedNumber value={metric.value} suffix={metric.suffix} /></div>
+              <div className="mt-1 text-[11px] text-paper/35">{metric.note}</div>
+            </div>
+          </Tilt>
         ); })}
       </section>
 

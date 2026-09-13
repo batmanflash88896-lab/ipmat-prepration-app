@@ -1,9 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "@/lib/store";
 import { BotBubble } from "@/components/AiBot";
+import { BrainCircuit, Sparkles, Target } from "lucide-react";
+
+const Apti3D = dynamic(() => import("@/components/Apti3D"), { ssr: false, loading: () => <div className="h-[320px] animate-pulse-soft rounded-full bg-orange/5" /> });
 
 const EXAMS = [
   { id: "IPMAT Indore", desc: "IIM Indore · 5-year IPM · QA MCQ + QA SA + VARC" },
@@ -38,18 +42,23 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen grid-bg flex items-center justify-center p-4">
-      <div className="pointer-events-none fixed inset-0 overflow-hidden -z-10">
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange/15 blur-[120px]" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-violet/15 blur-[120px]" />
-      </div>
-      <div className="w-full max-w-xl">
-        <div className="flex gap-1.5 mb-6">
-          {steps.map((_, i) => (
-            <div key={i} className={`h-1.5 flex-1 rounded-full transition-all ${i <= step ? "bg-orange" : "bg-white/10"}`} />
-          ))}
-        </div>
-        <AnimatePresence mode="wait">
+    <div className="relative min-h-screen overflow-hidden bg-[#07101d] p-4 md:p-7">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(255,107,53,.18),transparent_30%),radial-gradient(circle_at_85%_80%,rgba(114,103,240,.17),transparent_32%)]" />
+      <div className="pointer-events-none absolute inset-0 grid-bg opacity-60" />
+      <div className="relative mx-auto grid min-h-[calc(100vh-56px)] w-full max-w-7xl overflow-hidden rounded-[36px] border border-white/10 bg-[#0c1829]/80 shadow-[0_50px_140px_-50px_rgba(0,0,0,1)] backdrop-blur-xl lg:grid-cols-[1.05fr_.95fr]">
+        <aside className="relative hidden overflow-hidden border-r border-white/[0.08] p-10 lg:flex lg:flex-col lg:justify-between">
+          <div><div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-orange text-ink"><Target size={22} /></div><div><div className="display text-2xl font-bold">Aptivo</div><div className="text-[9px] font-bold uppercase tracking-[.25em] text-paper/35">IIM mastery engine</div></div></div><h1 className="display mt-10 text-5xl font-semibold leading-[1.02]">Meet the coach that<br/><span className="text-gradient">studies how you think.</span></h1><p className="mt-5 max-w-lg text-sm leading-6 text-paper/45">A living preparation system with above-PYQ practice, forensic mistake analysis and a plan that changes as you improve.</p></div>
+          <div className="absolute inset-x-8 top-[210px]"><Apti3D compact /></div>
+          <div className="relative grid grid-cols-3 gap-3">{[[BrainCircuit,"19","Skill tracks"],[Sparkles,"90","Elite questions"],[Target,"1","Daily target"]].map(([Icon,value,label]) => { const I = Icon as typeof Target; return <div key={String(label)} className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4"><I size={16} className="mb-4 text-orange"/><div className="text-xl font-bold">{String(value)}</div><div className="mt-1 text-[9px] uppercase tracking-wider text-paper/30">{String(label)}</div></div>; })}</div>
+        </aside>
+        <section className="flex items-center p-5 md:p-10">
+          <div className="w-full max-w-xl mx-auto">
+            <div className="mb-7 lg:hidden"><Apti3D compact /></div>
+            <div className="mb-3 flex items-center justify-between"><span className="text-[10px] font-bold uppercase tracking-[.2em] text-orange">Personalise your system</span><span className="text-xs font-bold text-paper/35">{step + 1} / {steps.length}</span></div>
+            <div className="flex gap-1.5 mb-6">
+              {steps.map((_, i) => <div key={i} className={`h-1.5 flex-1 rounded-full transition-all ${i <= step ? "bg-gradient-to-r from-orange to-gold" : "bg-white/10"}`} />)}
+            </div>
+            <AnimatePresence mode="wait">
           <motion.div key={step} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="card p-7">
             {step === 0 && (
               <div className="space-y-5">
@@ -132,7 +141,9 @@ export default function Onboarding() {
               </div>
             )}
           </motion.div>
-        </AnimatePresence>
+            </AnimatePresence>
+          </div>
+        </section>
       </div>
     </div>
   );
