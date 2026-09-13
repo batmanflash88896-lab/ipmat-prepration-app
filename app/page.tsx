@@ -60,7 +60,8 @@ export default function Home() {
             </div>
             <div className="mt-9 flex flex-wrap gap-x-6 gap-y-3 text-[11px] font-semibold text-paper/35"><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-mint" /> Adaptive explanations</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-orange" /> Above-PYQ mocks</span><span className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-violet" /> Precision analytics</span></div>
           </BlurFade>
-          <BlurFade delay={0.12} className="relative hidden lg:block">
+          <BlurFade delay={0.12} className="relative block min-h-[390px]">
+            <div className="absolute left-1/2 top-2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[9px] font-bold uppercase tracking-[.2em] text-paper/45 backdrop-blur-md">Move your pointer · interactive 3D coach</div>
             <Apti3D />
             <div className="absolute bottom-9 left-2 rounded-2xl border border-mint/20 bg-[#102739]/90 p-3 shadow-2xl backdrop-blur-xl"><div className="text-[9px] font-bold uppercase tracking-wider text-mint">Readiness</div><div className="mt-1 text-xl font-bold">78%</div></div>
             <div className="absolute right-0 top-12 rounded-2xl border border-violet/20 bg-[#1a1734]/90 p-3 shadow-2xl backdrop-blur-xl"><div className="text-[9px] font-bold uppercase tracking-wider text-violet">This week</div><div className="mt-1 text-sm font-bold">+12% accuracy</div></div>
