@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "@/lib/store";
-import { BotBubble } from "@/components/AiBot";
 import { BrainCircuit, Sparkles, Target } from "lucide-react";
 
 const Apti3D = dynamic(() => import("@/components/Apti3D"), { ssr: false, loading: () => <div className="h-[320px] animate-pulse-soft rounded-full bg-orange/5" /> });
@@ -47,7 +46,7 @@ export default function Onboarding() {
       <div className="pointer-events-none absolute inset-0 grid-bg opacity-60" />
       <div className="relative mx-auto grid min-h-[calc(100vh-56px)] w-full max-w-7xl overflow-hidden rounded-[36px] border border-white/10 bg-[#0c1829]/80 shadow-[0_50px_140px_-50px_rgba(0,0,0,1)] backdrop-blur-xl lg:grid-cols-[1.05fr_.95fr]">
         <aside className="relative hidden overflow-hidden border-r border-white/[0.08] p-10 lg:flex lg:flex-col lg:justify-between">
-          <div><div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-orange text-ink"><Target size={22} /></div><div><div className="display text-2xl font-bold">Aptivo</div><div className="text-[9px] font-bold uppercase tracking-[.25em] text-paper/35">IIM mastery engine</div></div></div><h1 className="display mt-10 text-5xl font-semibold leading-[1.02]">Meet the coach that<br/><span className="text-gradient">studies how you think.</span></h1><p className="mt-5 max-w-lg text-sm leading-6 text-paper/45">A living preparation system with above-PYQ practice, forensic mistake analysis and a plan that changes as you improve.</p></div>
+          <div><div className="flex items-center gap-3"><div className="grid h-11 w-11 place-items-center rounded-2xl bg-orange text-ink"><Target size={22} /></div><div><div className="display text-2xl font-bold">Aptivo</div><div className="text-[9px] font-bold uppercase tracking-[.25em] text-paper/35">IIM mastery engine</div></div></div><h1 className="display mt-10 text-5xl font-semibold leading-[1.02]">Precision in every move.<br/><span className="text-gradient">Mastery by design.</span></h1><p className="mt-5 max-w-lg text-sm leading-6 text-paper/45">A cinematic preparation system with above-PYQ practice, forensic mistake analysis and a plan engineered around your performance.</p></div>
           <div className="absolute inset-x-8 top-[210px]"><Apti3D compact /></div>
           <div className="relative grid grid-cols-3 gap-3">{[[BrainCircuit,"19","Skill tracks"],[Sparkles,"90","Elite questions"],[Target,"1","Daily target"]].map(([Icon,value,label]) => { const I = Icon as typeof Target; return <div key={String(label)} className="rounded-2xl border border-white/[0.08] bg-white/[0.04] p-4"><I size={16} className="mb-4 text-orange"/><div className="text-xl font-bold">{String(value)}</div><div className="mt-1 text-[9px] uppercase tracking-wider text-paper/30">{String(label)}</div></div>; })}</div>
         </aside>
@@ -62,7 +61,7 @@ export default function Onboarding() {
           <motion.div key={step} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="card p-7">
             {step === 0 && (
               <div className="space-y-5">
-                <BotBubble expression="cheer" text={<>Hi! I'm <b className="text-mint">Apti</b>, your AI study buddy. I'll turn your IPMAT prep into a daily game you actually enjoy. Let's set you up in 30 seconds!</>} />
+                <div><div className="eyebrow">Welcome to Aptivo</div><h2 className="display mt-2 text-4xl font-semibold">Build your unfair advantage.</h2><p className="mt-3 text-sm leading-6 text-paper/50">Tell us where you are headed. The engine will calibrate your daily workload, mock difficulty and revision cycle.</p></div>
                 <div>
                   <label className="text-sm text-paper/60">What should I call you?</label>
                   <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name"
@@ -73,7 +72,7 @@ export default function Onboarding() {
             )}
             {step === 1 && (
               <div className="space-y-5">
-                <BotBubble expression="think" text="Which exam are you targeting? I'll tailor mocks, sections and difficulty to it." />
+                <div><div className="eyebrow">Define the destination</div><h2 className="display mt-2 text-3xl font-semibold">Which examination are you targeting?</h2><p className="mt-2 text-sm text-paper/45">Your paper structure, timing and preparation mix will adapt to this choice.</p></div>
                 <div className="grid gap-2">
                   {EXAMS.map((e) => (
                     <button key={e.id} onClick={() => setExam(e.id)}
@@ -96,7 +95,7 @@ export default function Onboarding() {
             )}
             {step === 2 && (
               <div className="space-y-5">
-                <BotBubble expression="happy" text="How would you rate yourself right now, and how many hours can you study daily? I'll build your plan around this." />
+                <div><div className="eyebrow">Set the baseline</div><h2 className="display mt-2 text-3xl font-semibold">Calibrate your current level.</h2><p className="mt-2 text-sm text-paper/45">Be honest. The system increases pressure as your accuracy becomes stable.</p></div>
                 <div>
                   <label className="text-sm text-paper/60 mb-2 block">Current level</label>
                   <div className="grid grid-cols-3 gap-2">
@@ -118,7 +117,7 @@ export default function Onboarding() {
             )}
             {step === 3 && (
               <div className="space-y-5">
-                <BotBubble expression="wow" text={<>Pick my teaching voice! You can change it anytime. (These are original AI coach voices — friendly, licensed, and exam-focused.)</>} />
+                <div><div className="eyebrow">Choose the tone</div><h2 className="display mt-2 text-3xl font-semibold">How should guidance feel?</h2><p className="mt-2 text-sm text-paper/45">Select the coaching style used in lessons, reviews and difficult practice sessions.</p></div>
                 <div className="grid grid-cols-2 gap-2">
                   {VOICES.map((v) => (
                     <button key={v.id} onClick={() => setVoice(v.id)}
@@ -136,7 +135,7 @@ export default function Onboarding() {
             )}
             {step === 4 && (
               <div className="space-y-5 text-center">
-                <BotBubble expression="cheer" text={<>You're all set, <b>{name || "champion"}</b>! Your personalised IPMAT journey is ready. Daily challenges, mocks, video lessons and me — every step of the way. 🚀</>} />
+                <div><div className="mx-auto grid h-16 w-16 place-items-center rounded-full border border-mint/25 bg-mint/10 text-2xl text-mint">✓</div><div className="eyebrow mt-5">Calibration complete</div><h2 className="display mt-2 text-4xl font-semibold">Your preparation system is ready, {name || "aspirant"}.</h2><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-paper/45">Your first daily plan, elite mocks and revision priorities are waiting.</p></div>
                 <button onClick={finish} className="btn-primary w-full text-lg">Enter Aptivo →</button>
               </div>
             )}
